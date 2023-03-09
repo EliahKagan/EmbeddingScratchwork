@@ -46,7 +46,7 @@ jobs:
         run: python -V
 
       - name: Set up mutex
-        uses: EliahKagan/gh-action-mutex@v1.0-alpha-7
+        uses: shogo82148/actions-mutex@v1
 
       - name: Run Unit Tests
         run: python -m unittest -v
