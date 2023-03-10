@@ -46,7 +46,7 @@ jobs:
         run: python -V
 
       - name: Set up mutex
-        uses: shogo82148/actions-mutex@v1
+        uses: EliahKagan/actions-mutex@develop # FIXME: Use @v2 when available.
 
       - name: Run Unit Tests
         run: python -m unittest -v
