@@ -46,7 +46,7 @@ jobs:
         run: python -V
 
       - name: Set up mutex
-        if: ! ${{ vars.TESTS_CI_NONBLOCKING }}
+        if: ${{ ! vars.TESTS_CI_NONBLOCKING }}
         uses: EliahKagan/actions-mutex@v2
 
       - name: Run Unit Tests
