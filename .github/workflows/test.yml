@@ -22,7 +22,7 @@ jobs:
           # Allowed values are 'false', 'true', 'no', 'yes', '0', '1', and ''.
           if grep -qx '' <<<"$TESTS_CI_NONBLOCKING"; then
               # Nonblocking mode is implicitly off, so we WILL use the mutex.
-              echo '::warning ::No GitHub Actions configuration variable TESTS_CI_NONBLOCKING.\nTreating it as if set to false.'
+              printf '::warning ::No GitHub Actions configuration variable TESTS_CI_NONBLOCKING.\nTreating it as if set to false.\n'
               echo 'No GitHub Actions configuration variable TESTS_CI_NONBLOCKING.' >&2
               echo 'Treating it as if set to false.' >&2
               echo 'To make your intentions clear, set the configuration variable.' >&2
