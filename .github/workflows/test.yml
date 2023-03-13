@@ -13,8 +13,11 @@ jobs:
   read-blocking-config:
     name: Read blocking configuration
     runs-on: ubuntu-latest
+    outputs:
+      use-mutex: ${{ steps.read-blocking-config-variable.outputs.use-mutex }}
     steps:
       - name: Read TESTS_CI_NONBLOCKING variable
+        id: read-blocking-config-variable
         run: |
           # Allowed values are 'false', 'true', 'no', 'yes', '0', '1', and ''.
           if grep -qx '' <<<"$TESTS_CI_NONBLOCKING"; then
