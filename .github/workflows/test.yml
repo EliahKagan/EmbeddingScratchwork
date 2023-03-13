@@ -71,6 +71,9 @@ jobs:
       - name: Print Python version
         run: python -V
 
+      - name: Debug use-mutex configuration
+        run: echo '${{ needs.read-blocking-config.outputs.use-mutex }}'
+
       - name: Set up mutex
         if: needs.read-blocking-config.outputs.use-mutex
         uses: EliahKagan/actions-mutex@v2
