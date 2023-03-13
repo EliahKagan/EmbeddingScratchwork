@@ -78,7 +78,7 @@ jobs:
         run: echo '${{ needs.read-blocking-config.outputs.use-mutex }}'
 
       - name: Set up mutex
-        if: needs.read-blocking-config.outputs.use-mutex
+        if: needs.read-blocking-config.outputs.use-mutex != 'false'
         uses: EliahKagan/actions-mutex@v2
 
       - name: Run Unit Tests
