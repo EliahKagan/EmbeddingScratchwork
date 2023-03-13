@@ -45,6 +45,12 @@ jobs:
       - name: Print Python version
         run: python -V
 
+      # FIXME: Remove after debugging.
+      - name: Print TESTS_CI_NONBLOCKING
+        run: |
+          printf 'TESTS_CI_NONBLOCKING="%s"\n' \
+              '${{ vars.TESTS_CI_NONBLOCKING }}'
+
       - name: Set up mutex
         if: ${{ ! vars.TESTS_CI_NONBLOCKING }}
         uses: EliahKagan/actions-mutex@v2
