@@ -45,9 +45,11 @@ jobs:
       - name: Print Python version
         run: python -V
 
-      - name: Set up mutex  # FIXME: Expand if-condition.
+      - name: Set up mutex
         if: >-
-          vars.TESTS_CI_NONBLOCKING == 'false'
+          vars.TESTS_CI_NONBLOCKING != 'true' &&
+          vars.TESTS_CI_NONBLOCKING != 'yes' &&
+          vars.TESTS_CI_NONBLOCKING != '1'
         uses: EliahKagan/actions-mutex@v2
 
       - name: Run Unit Tests
