@@ -8,13 +8,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check OPENAI_API_KEY repository secret
+        run: grep -q '^sk-' <<<'${{ secrets.OPENAI_API_KEY }}'
+
+  # TODO: Change this job to actually record the configuration as a job result,
+  #       renaming this job accordingly. Then the test jobs' "Set up mutex"
+  #       step below can be made cleaner and simpler.
+  validate-blocking-config:
+    name: Validate blocking configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check TESTS_CI_NONBLOCKING variable
         run: |
-          grep -q '^sk-' <<<'${{ secrets.OPENAI_API_KEY }}'
+          # Allowed values are 'false', 'true', 'no', 'yes', '0', '1', and ''.
+          grep -Eqxi 'false|true|no|yes|[01]|' \
+              <<<'${{ vars.TESTS_CI_NONBLOCKING }}'
 
   test:
     name: Unit Tests
 
-    needs: check-for-api-key
+    needs: [check-for-api-key, validate-blocking-config]
 
     strategy:
       matrix:
