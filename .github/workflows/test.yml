@@ -26,13 +26,13 @@ jobs:
               echo 'Treating it as if set to false.' >&2
               echo 'To make your intentions clear, set the variable.' >&2
               echo 'https://docs.github.com/en/actions/learn-github-actions/variables' >&2
-              echo "use-mutex=true" >>"$GITHUB_OUTPUT"
+              echo "use-mutex=1" >>"$GITHUB_OUTPUT"
           elif grep -Eqxi 'false|no|0|' <<<"$TESTS_CI_NONBLOCKING"; then
               # Nonblocking mode is explicitly off, so we WILL use the mutex.
-              echo "use-mutex=true" >>"$GITHUB_OUTPUT"
+              echo "use-mutex=1" >>"$GITHUB_OUTPUT"
           elif grep -Eqxi 'true|yes|1' <<<"$TESTS_CI_NONBLOCKING"; then
               # Nonblocking mode is on, so we will NOT use the mutex.
-              echo "use-mutex=false" >>"$GITHUB_OUTPUT"
+              echo "use-mutex=0" >>"$GITHUB_OUTPUT"
           else
               printf 'Unrecognized value "%s"\n' "$TESTS_CI_NONBLOCKING" >&2
               exit 1
