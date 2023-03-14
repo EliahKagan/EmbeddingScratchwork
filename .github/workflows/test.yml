@@ -29,7 +29,7 @@ jobs:
               'To make your intentions clear, set the configuration variable.'
               'https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository'
           )
-          
+
           case "$TESTS_CI_NONBLOCKING" in
           '' )
               # Nonblocking mode is *implicitly* off, so we WILL use the mutex.
