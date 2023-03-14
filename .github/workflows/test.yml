@@ -20,27 +20,35 @@ jobs:
         id: read-blocking-config-variable
         run: |
           # Allowed values are "false", "true", "no", "yes", "0", "1", and "".
+
+          shopt -s nocaseglob  # Case-insensitive pattern-matching.
+
           readonly -a no_var_warning=(
               'No GitHub Actions configuration variable TESTS_CI_NONBLOCKING.'
               'Treating it as if set to false.'
               'To make your intentions clear, set the configuration variable.'
               'https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository'
           )
-          if grep -qx '' <<<"$TESTS_CI_NONBLOCKING"; then
-              # Nonblocking mode is implicitly off, so we WILL use the mutex.
+          
+          case "$TESTS_CI_NONBLOCKING" in
+          '' )
+              # Nonblocking mode is *implicitly* off, so we WILL use the mutex.
               printf '%s\n' "${no_var_warning[@]}" >&2  # Warn in step output.
               echo "::warning ::${no_var_warning[*]}"  # Annotate workflow.
+              ;&
+          false | no | 0 )  # Or fell through.
+              # Nonblocking mode is off, so we WILL use the mutex.
               echo "use-mutex=true" >>"$GITHUB_OUTPUT"
-          elif grep -Eqxi 'false|no|0|' <<<"$TESTS_CI_NONBLOCKING"; then
-              # Nonblocking mode is explicitly off, so we WILL use the mutex.
-              echo "use-mutex=true" >>"$GITHUB_OUTPUT"
-          elif grep -Eqxi 'true|yes|1' <<<"$TESTS_CI_NONBLOCKING"; then
+              ;;
+          true | yes | 1 )
               # Nonblocking mode is on, so we will NOT use the mutex.
               echo "use-mutex=false" >>"$GITHUB_OUTPUT"
-          else
+              ;;
+          * )
               printf 'Unrecognized value "%s"\n' "$TESTS_CI_NONBLOCKING" >&2
               exit 1
-          fi
+              ;;
+          esac
         env:
           TESTS_CI_NONBLOCKING: ${{ vars.TESTS_CI_NONBLOCKING }}
 
