@@ -20,7 +20,7 @@ jobs:
         id: read-blocking-config-variable
         run: |
           # Allowed values: "false" (or "no", "0", ""), "true" (or "yes", "1").
-          "$GITHUB_WORKSPACE/.github/workflows/get-blocking-config"
+          '${{ github.workspace }}/.github/workflows/get-blocking-config'
         env:
           TESTS_CI_NONBLOCKING: ${{ vars.TESTS_CI_NONBLOCKING }}
 
