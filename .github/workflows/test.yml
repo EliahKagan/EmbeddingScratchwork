@@ -16,11 +16,14 @@ jobs:
     outputs:
       use-mutex: ${{ steps.read-blocking-config-variable.outputs.use-mutex }}
     steps:
+      - name: Check out source repository
+        uses: actions/checkout@v3
+
       - name: Read TESTS_CI_NONBLOCKING variable
         id: read-blocking-config-variable
         run: |
           # Allowed values: "false" (or "no", "0", ""), "true" (or "yes", "1").
-          '${{ github.workspace }}/.github/workflows/get-blocking-config'
+          .github/workflows/get-blocking-config
         env:
           TESTS_CI_NONBLOCKING: ${{ vars.TESTS_CI_NONBLOCKING }}
 
