@@ -1,4 +1,4 @@
-"""Connected components in an undirected graph - Way "B"."""
+"""Connected components in an undirected graph."""
 
 import collections
 

@@ -1,4 +1,4 @@
-"""Connected components in an undirected graph - Way "A"."""
+"""Connected components in an undirected graph."""
 
 
 def get_components(vertices, edges):
