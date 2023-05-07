@@ -6,9 +6,11 @@ channels:
 dependencies:
   - python=3.11
   - backoff
+  - beautifulsoup4
   - numpy
   - openai
   - requests
+  - wikipedia-api
 
   # For development
   - attrs
@@ -26,3 +28,4 @@ dependencies:
   - pip
   - pip:
     - blake3
+    - types-beautifulsoup4  # FIXME: Remove this if it's not helping.
