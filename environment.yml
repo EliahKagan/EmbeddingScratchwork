@@ -28,4 +28,3 @@ dependencies:
   - pip
   - pip:
     - blake3
-    - types-beautifulsoup4  # FIXME: Remove this if it's not helping.
