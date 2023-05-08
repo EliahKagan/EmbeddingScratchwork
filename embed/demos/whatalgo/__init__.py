@@ -1,16 +1,28 @@
 """Name algorithms from their code."""
 
 import logging
+import re
 
+import attrs
 import bs4
 import openai
-import re
 import wikipediaapi
 
 _loggger = logging.getLogger(__name__)
 
-_ARTICLE_TITLES = ['List of algorithms', 'List of data structures']
-"""Titles of Wikipedia articles that list algorithms and data structures."""
+
+@attrs.frozen
+class _Rule:
+    """Rule for collecting algorithm or data structure names."""
+    article_title = attrs.field()
+    leaf_only = attrs.field()
+
+
+_ARTICLE_RULES = [
+    _Rule(article_title='List of algorithms', leaf_only=True),
+    _Rule(article_title='List of data structures', leaf_only=False),
+]
+"""Inormation on Wikipedia articles listing algorithms and data structures."""
 
 _SKIP_SECTIONS = {'See also', 'External links'}
 """Titles of sections not listing specific algorithms and data structures."""
@@ -18,7 +30,7 @@ _SKIP_SECTIONS = {'See also', 'External links'}
 _NAME_PATTERN = re.compile(
     r'\S(?:[^:,\s]|,(?!\s)|\s(?![-\N{EN DASH}\N{EM DASH}]\s))*',
 )
-"""Regex for the "name" part of "name: summary" or "name, summary"."""
+"""Regex for the "name" part of "name: summary" or several similar forms."""
 
 
 def get_known_names():
@@ -27,11 +39,11 @@ def get_known_names():
 
     return sorted({
         _NAME_PATTERN.search(element.text).group()
-        for article_title in _ARTICLE_TITLES
-        for section in wiki.article(article_title).sections
+        for rule in _ARTICLE_RULES
+        for section in wiki.article(rule.article_title).sections
         if section.title not in _SKIP_SECTIONS
         for element
         in bs4.BeautifulSoup(section.full_text(), features='html.parser')
               .find_all('li', recursive=True)
-        if not element.find('ul')  # Filter out non-leaf list items.
+        if not (rule.leaf_only and element.find('ul'))
     })
