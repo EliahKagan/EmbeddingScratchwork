@@ -14,8 +14,12 @@ _loggger = logging.getLogger(__name__)
 @attrs.frozen
 class _Rule:
     """Rule for collecting algorithm or data structure names."""
+
     article_title = attrs.field()
+    """The title of the article."""
+
     leaf_only = attrs.field()
+    """Whether interest is limited names in list items WITHOUT sublists."""
 
 
 _ARTICLE_RULES = [
@@ -39,7 +43,7 @@ def _parse_section(section):
 
 
 def get_known_names():
-    """Retrieve some names of algorithms and data structures from Wikiedia."""
+    """Retrieve some names of algorithms and data structures from Wikipedia."""
     wiki = wikipediaapi.Wikipedia('en', wikipediaapi.ExtractFormat.HTML)
 
     return sorted({
