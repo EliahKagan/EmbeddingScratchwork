@@ -33,6 +33,11 @@ _NAME_PATTERN = re.compile(
 """Regex for the "name" part of "name: summary" or several similar forms."""
 
 
+def _parse_section(section):
+    """Parse the HTML of a Wikipedia article section with Beautiful Soup."""
+    return bs4.BeautifulSoup(section.full_text(), features='html.parser')
+
+
 def get_known_names():
     """Retrieve some names of algorithms and data structures from Wikiedia."""
     wiki = wikipediaapi.Wikipedia('en', wikipediaapi.ExtractFormat.HTML)
@@ -42,8 +47,6 @@ def get_known_names():
         for rule in _ARTICLE_RULES
         for section in wiki.article(rule.article_title).sections
         if section.title not in _SKIP_SECTIONS
-        for element
-        in bs4.BeautifulSoup(section.full_text(), features='html.parser')
-              .find_all('li', recursive=True)
+        for element in _parse_section(section).find_all('li', recursive=True)
         if not (rule.leaf_only and element.find('ul'))
     })
