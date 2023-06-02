@@ -15,6 +15,7 @@ import re
 import unittest.mock
 
 import attrs
+import cachetools
 
 import embed
 
@@ -64,6 +65,12 @@ def configure_logging():
     if level not in {'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'}:
         raise ValueError(f'unrecognized logging level {level!r}')
     logging.basicConfig(level=getattr(logging, level))
+
+
+class _EmbeddingsCache(cachetools.Cache):
+    """Cache for embeddings."""
+
+    # FIXME: Implement this.
 
 
 @attrs.mutable

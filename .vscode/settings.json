@@ -10,6 +10,7 @@
         "blake3",
         "buildscript",
         "cachers",
+        "cachetools",
         "catrun",
         "codegraph",
         "codeql",
