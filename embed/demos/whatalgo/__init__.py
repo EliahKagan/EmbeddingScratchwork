@@ -72,7 +72,8 @@ def get_known_names(dir=None):
         known_names_json = path.read_text(encoding='utf-8')
     except OSError:
         known_names = _fetch_known_names()
-        path.write_text(json.dumps(known_names), encoding='utf-8')
+        content = json.dumps(known_names, indent=4) + '\n'
+        path.write_text(content, encoding='utf-8')
     else:
         known_names = json.loads(known_names_json)
 
