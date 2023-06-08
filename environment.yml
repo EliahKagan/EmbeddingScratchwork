@@ -10,7 +10,9 @@ dependencies:
   - beautifulsoup4
   - numpy
   - openai
+  - orjson
   - requests
+  - safetensors
   - wikipedia-api
 
   # For development
