@@ -3,8 +3,11 @@
     "cSpell.words": [
         "addaudithook",
         "alefragnani",
+        "argmax",
+        "argsort",
         "autobuild",
         "backoff",
+        "beautifulsoup4",
         "bewuethr",
         "bierner",
         "blake3",
@@ -31,6 +34,7 @@
         "globstar",
         "graphviz",
         "graphvizonline",
+        "impls",
         "ipykernel",
         "ipynb",
         "jupyter",
@@ -60,6 +64,7 @@
         "shopt",
         "stkb",
         "subaudit",
+        "sublists",
         "tablefmt",
         "tamasfe",
         "toolsai",
@@ -67,7 +72,10 @@
         "unpatch",
         "unpatches",
         "unpatching",
-        "Vassallo"
+        "Vassallo",
+        "whatalgo",
+        "wikipedia",
+        "wikipediaapi"
     ],
     "cSpell.ignoreWords": [
         "spanish",

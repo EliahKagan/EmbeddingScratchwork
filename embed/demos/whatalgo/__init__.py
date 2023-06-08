@@ -13,7 +13,7 @@ import wikipediaapi
 
 import embed
 
-_loggger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 @attrs.frozen
@@ -31,7 +31,7 @@ _ARTICLE_RULES = [
     _Rule(article_title='List of algorithms', leaf_only=True),
     _Rule(article_title='List of data structures', leaf_only=False),
 ]
-"""Inormation on Wikipedia articles listing algorithms and data structures."""
+"""Information on Wikipedia articles listing algorithms and data structures."""
 
 _SKIP_SECTIONS = {'See also', 'External links'}
 """Titles of sections not listing specific algorithms and data structures."""
