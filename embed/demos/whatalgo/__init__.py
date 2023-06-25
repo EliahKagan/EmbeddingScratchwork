@@ -8,7 +8,6 @@ __all__ = [
 ]
 
 import inspect
-import json
 import logging
 from pathlib import Path
 import re
@@ -16,6 +15,7 @@ import re
 import attrs
 import bs4
 import openai
+import orjson
 import wikipediaapi
 
 from embed import cached
@@ -66,6 +66,9 @@ _NAME_PATTERN = re.compile(
 )
 """Regex for the "name" part of "name: summary" or several similar forms."""
 
+_ORJSON_SAVE_OPTIONS = orjson.OPT_APPEND_NEWLINE | orjson.OPT_INDENT_2
+"""Options for ``orjson.dumps`` when it is called to save algorithm names."""
+
 
 def _parse_section(section):
     """Parse the HTML of a Wikipedia article section with Beautiful Soup."""
@@ -92,17 +95,15 @@ def get_known_names(data_dir=None):
         data_dir = cached.DEFAULT_DATA_DIR
 
     path = Path(data_dir, 'whatalgo-known-names.json')
-
     try:
-        known_names_json = path.read_text(encoding='utf-8')
+        json_bytes = path.read_bytes()
     except FileNotFoundError:
-        known_names = _fetch_known_names()
-        content = json.dumps(known_names, indent=4) + '\n'
-        path.write_text(content, encoding='utf-8')
+        names = _fetch_known_names()
+        path.write_bytes(orjson.dumps(names, option=_ORJSON_SAVE_OPTIONS))
     else:
-        known_names = json.loads(known_names_json)
+        names = orjson.loads(json_bytes)
 
-    return known_names
+    return names
 
 
 def get_code_text(implementation):
