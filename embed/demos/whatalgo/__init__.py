@@ -1,5 +1,7 @@
 """Name algorithms from their code."""
 
+__all__ = ['examples', 'get_known_names', 'compute_similarities']
+
 import inspect
 import json
 import logging
@@ -11,7 +13,8 @@ import bs4
 import openai
 import wikipediaapi
 
-import embed
+from embed import cached
+from . import examples
 
 _logger = logging.getLogger(__name__)
 
@@ -64,7 +67,7 @@ def _fetch_known_names():
 def get_known_names(dir=None):
     """Load names of "known" algorithms, or fetch from Wikipedia and save."""
     if dir is None:
-        dir = embed.cached.DEFAULT_DATA_DIR
+        dir = cached.DEFAULT_DATA_DIR
 
     path = Path(dir, 'whatalgo-known-names.json')
 
@@ -101,18 +104,19 @@ def _get_code_text(impl):
     return impl
 
 
-def compute_similarities(*, names=None, impls, dir=None):
+# TODO: Expand the docstring further, with details and/or usage guidance.
+def compute_similarities(*, descriptions=None, implementations, dir=None):
     """
-    Compute similarities between pieces of source code and algorithm names.
+    Compute similarities between pieces of source code and descriptions.
 
     Returns a matrix with a row for each implementation. Each row's elements
-    are semantic similarities of that implementation to each algorithm name.
+    are semantic similarities of that implementation to each description.
     """
-    if names is None:
-        names = get_known_names(dir=dir)
+    if descriptions is None:
+        descriptions = get_known_names(dir=dir)
 
-    codes = [_get_code_text(impl) for impl in impls]
+    codes = [_get_code_text(impl) for impl in implementations]
 
-    name_embeddings = embed.cached.embed_many(names, data_dir=dir)
-    code_embeddings = embed.cached.embed_many(codes, data_dir=dir)
-    return code_embeddings @ name_embeddings.T
+    description_embeddings = cached.embed_many(descriptions, data_dir=dir)
+    code_embeddings = cached.embed_many(codes, data_dir=dir)
+    return code_embeddings @ description_embeddings.transpose()
