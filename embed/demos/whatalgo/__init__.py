@@ -113,7 +113,7 @@ def get_code_text(implementation):
     ``implementation`` may be:
 
     - A module object, whose ``.py`` file is to be found and read.
-    - A ``Path``, representing the path to a `.py` file.
+    - A ``Path``, representing the path to a ``.py`` file.
     - A string, holding the actual source code (not a filename).
     """
     if inspect.ismodule(implementation):
