@@ -30,8 +30,8 @@ import unittest
 
 import backoff
 
-from tests import _bases, _helpers
 import embed
+from tests import _bases, _helpers
 
 _STACK_SIZE = 32_768
 """Stack size in bytes for newly created worker threads. Do not change this."""
@@ -42,14 +42,14 @@ _BATCH_COUNT = 600
 _BATCH_SIZE = 8
 """Number of requests each batch makes sequentially in the backoff test."""
 
-_logger = logging.getLogger(__name__)
-"""Logger for messages from this test module."""
-
-_is_backoff_message = re.compile(
+_BACKOFF_MESSAGE_REGEX = re.compile(
     r'INFO:backoff:Backing off _post_request\(\.\.\.\) for [0-9.]+s '
     r'\(<Response \[429\]>\)',
-).fullmatch
-"""Check if the string is a log message about backoff with expected details."""
+)
+"""Regex to match a log message aobut backoff with expected details."""
+
+_logger = logging.getLogger(__name__)
+"""Logger for messages from this test module."""
 
 
 def _run_batch(batch_index):
@@ -79,9 +79,8 @@ class TestBackoff(_bases.TestBase):
         super().setUp()
 
         if 'CI' in os.environ:
-            # pylint: disable=broad-exception-raised  # Error that blocks test.
-            raise Exception(
-                "This test shouldn't run via continuous integration.")
+            message = "This test shouldn't run via continuous integration."
+            raise RuntimeError(message)
 
         self._old_stack_size = threading.stack_size(_STACK_SIZE)
 
@@ -105,7 +104,7 @@ class TestBackoff(_bases.TestBase):
                 )
 
         got_backoff = any(
-            _is_backoff_message(message)
+            _BACKOFF_MESSAGE_REGEX.fullmatch(message)
             for message in log_context.output
         )
         self.assertTrue(got_backoff)

@@ -8,6 +8,7 @@ dependencies:
   - attrs
   - backoff
   - beautifulsoup4
+  - dulwich
   - numpy
   - openai
   - orjson
@@ -15,14 +16,24 @@ dependencies:
   - safetensors
   - wikipedia-api
 
-  # For development
-  - flake8
+  # For testing
+  - attrs
   - parameterized
+  - pytest
+  - pytest-sugar
+
+  # For linting
+  - flake8
+  - flake8-pyproject
+  - isort
   - pylint
 
   # For notebooks
   - graphviz
   - ipykernel
+  - jupyterlab>=4
+  - jupyter-collaboration
+  - nbdime
   - python-graphviz
   - tabulate
 

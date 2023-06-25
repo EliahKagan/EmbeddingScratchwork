@@ -30,7 +30,6 @@ class TestBase(unittest.TestCase):
             This supplies a simplified version of ``TestCase.enterContext`` for
             versions of Python that do not have it.
             """
-            # We must call __enter__ to implement the needed "with"-like logic.
             context = cm.__enter__()  # pylint: disable=unnecessary-dunder-call
             self.addCleanup(lambda: cm.__exit__(*sys.exc_info()))
             return context
@@ -70,8 +69,8 @@ class TestDiskCachedBase(TestEmbedBase):
         """Create a temporary directory."""
         super().setUp()
 
-        # pylint: disable=consider-using-with  # enterContext is like "with".
-        self._dir_path = Path(self.enterContext(TemporaryDirectory()))
+        # pylint: disable-next=consider-using-with
+        self.dir_path = Path(self.enterContext(TemporaryDirectory()))
 
     @property
     @abstractmethod
@@ -99,6 +98,22 @@ class TestEmbedOneBase(TestEmbedBase):
     def test_shape_is_model_dimension(self):
         result = self.func('Your text string goes here')
         self.assertEqual(result.shape, (embed.DIMENSION,))
+
+    @parameterized.expand([
+        ('catrun_en', 'The cat runs.'),
+        ('catrun_es', 'El gato corre.'),
+        ('dogwalk_en', 'The dog walks.'),
+        ('dogwalk_es', 'El perro camina.'),
+        ('lionsleep_en', 'The lion sleeps.'),
+        ('lionsleep_es', 'El león duerme.'),
+    ])
+    def test_embeddings_are_normalized(self, _name, text):
+        embedding = self.func(text)
+        norm = np.linalg.norm(embedding)
+        self.assertAlmostEqual(
+            norm, 1.0,
+            places=3,  # Allow a pretty wide margin for rounding error.
+        )
 
     @parameterized.expand([
         ('catrun', 'The cat runs.', 'El gato corre.'),
@@ -151,6 +166,16 @@ class TestEmbedManyBase(TestEmbedBase):
 
     def test_shape_has_model_dimension(self):
         self.assertEqual(self._many.shape, (5, embed.DIMENSION))
+
+    def test_embeddings_are_normalized(self):
+        names = ['your', 'catrun_en', 'catrun_es', 'dogwalk_en', 'dogwalk_es']
+        for name, embedding in zip(names, self._many):
+            with self.subTest(name):
+                norm = np.linalg.norm(embedding)
+                self.assertAlmostEqual(
+                    norm, 1.0,
+                    places=3,  # Allow a pretty wide margin for rounding error.
+                )
 
     def test_en_and_es_sentences_are_very_similar(self):
         with self.subTest('catrun'):
