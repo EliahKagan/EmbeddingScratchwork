@@ -1,6 +1,11 @@
 """Name algorithms from their code."""
 
-__all__ = ['examples', 'get_known_names', 'compute_similarities']
+__all__ = [
+    'examples',
+    'get_known_names',
+    'get_code_text',
+    'compute_similarities',
+]
 
 import inspect
 import json
@@ -83,25 +88,25 @@ def get_known_names(data_dir=None):
     return known_names
 
 
-def _get_code_text(impl):
+def get_code_text(implementation):
     """Get the source code text of an implementation."""
-    if inspect.ismodule(impl):
+    if inspect.ismodule(implementation):
         # The code could instead be gotten from the module itself, but we want
         # whatever is in the actual file (and to fail if there isn't one).
-        return Path(impl.__file__).read_text('utf-8')
+        return Path(implementation.__file__).read_text('utf-8')
 
-    if isinstance(impl, Path):
-        return impl.read_text('utf-8')
+    if isinstance(implementation, Path):
+        return implementation.read_text('utf-8')
 
-    if not isinstance(impl, str):
-        message = f'impl must be module, Path, or str, not {type(impl)!r}'
-        raise TypeError(message)
+    if not isinstance(implementation, str):
+        raise TypeError('impl must be module, Path, or str, '
+                        f'not {type(implementation)!r}')
 
-    if '\n' not in impl:  # This is probably a bug in the caller.
-        message = f"impl {impl!r} doesn't look like code (pass paths as Path)"
-        raise ValueError(message)
+    if '\n' not in implementation:  # This is probably a bug in the caller.
+        raise ValueError(f"implementation {implementation!r} doesn't look like"
+                         ' code (pass paths as Path)')
 
-    return impl
+    return implementation
 
 
 # TODO: Expand the docstring further, with details and/or usage guidance.
@@ -115,7 +120,7 @@ def compute_similarities(*, descriptions=None, implementations, data_dir=None):
     if descriptions is None:
         descriptions = get_known_names(data_dir=data_dir)
 
-    codes = [_get_code_text(impl) for impl in implementations]
+    codes = [get_code_text(impl) for impl in implementations]
 
     description_embeddings = cached.embed_many(descriptions, data_dir=data_dir)
     code_embeddings = cached.embed_many(codes, data_dir=data_dir)
