@@ -22,6 +22,7 @@ from embed import cached
 from embed.demos.whatalgo import examples
 
 _logger = logging.getLogger(__name__)
+"""Logger for messages from this submodule (``embed.demos.whatalgo``)."""
 
 
 @attrs.frozen
@@ -89,7 +90,15 @@ def get_known_names(data_dir=None):
 
 
 def get_code_text(implementation):
-    """Get the source code text of an implementation."""
+    """
+    Get the source code text of an implementation.
+
+    ``implementation`` may be:
+
+    - A module object, whose ``.py`` file is to be found and read.
+    - A ``Path``, representing the path to a `.py` file.
+    - A string, holding the actual source code (not a filename).
+    """
     if inspect.ismodule(implementation):
         # The code could instead be gotten from the module itself, but we want
         # whatever is in the actual file (and to fail if there isn't one).
