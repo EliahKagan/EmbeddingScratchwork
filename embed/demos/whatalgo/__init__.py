@@ -95,7 +95,7 @@ def get_known_names(data_dir=None):
 
     try:
         known_names_json = path.read_text(encoding='utf-8')
-    except OSError:
+    except FileNotFoundError:
         known_names = _fetch_known_names()
         content = json.dumps(known_names, indent=4) + '\n'
         path.write_text(content, encoding='utf-8')
