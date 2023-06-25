@@ -14,7 +14,7 @@ import openai
 import wikipediaapi
 
 from embed import cached
-from . import examples
+from embed.demos.whatalgo import examples
 
 _logger = logging.getLogger(__name__)
 
@@ -64,12 +64,12 @@ def _fetch_known_names():
     })
 
 
-def get_known_names(dir=None):
+def get_known_names(data_dir=None):
     """Load names of "known" algorithms, or fetch from Wikipedia and save."""
-    if dir is None:
-        dir = cached.DEFAULT_DATA_DIR
+    if data_dir is None:
+        data_dir = cached.DEFAULT_DATA_DIR
 
-    path = Path(dir, 'whatalgo-known-names.json')
+    path = Path(data_dir, 'whatalgo-known-names.json')
 
     try:
         known_names_json = path.read_text(encoding='utf-8')
@@ -105,7 +105,7 @@ def _get_code_text(impl):
 
 
 # TODO: Expand the docstring further, with details and/or usage guidance.
-def compute_similarities(*, descriptions=None, implementations, dir=None):
+def compute_similarities(*, descriptions=None, implementations, data_dir=None):
     """
     Compute similarities between pieces of source code and descriptions.
 
@@ -113,10 +113,10 @@ def compute_similarities(*, descriptions=None, implementations, dir=None):
     are semantic similarities of that implementation to each description.
     """
     if descriptions is None:
-        descriptions = get_known_names(dir=dir)
+        descriptions = get_known_names(data_dir=data_dir)
 
     codes = [_get_code_text(impl) for impl in implementations]
 
-    description_embeddings = cached.embed_many(descriptions, data_dir=dir)
-    code_embeddings = cached.embed_many(codes, data_dir=dir)
+    description_embeddings = cached.embed_many(descriptions, data_dir=data_dir)
+    code_embeddings = cached.embed_many(codes, data_dir=data_dir)
     return code_embeddings @ description_embeddings.transpose()
