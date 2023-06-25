@@ -45,8 +45,24 @@ _ARTICLE_RULES = [
 _SKIP_SECTIONS = {'See also', 'External links'}
 """Titles of sections not listing specific algorithms and data structures."""
 
-_NAME_PATTERN = re.compile(  # TODO: Simplify this regular expression.
-    r'\S(?:(?=[^\n])(?:[^:,\s]|,(?!\s)|\s(?![-\N{EN DASH}\N{EM DASH}]\s)))*',
+_NAME_PATTERN = re.compile(
+    r"""
+    \S  # The first character can be anything that isn't whitespace.
+    (?:  # Pattern for each character after the first:
+        (?= [^\n])  # It is NOT allowed to be a newline, that much we know.
+        (?:
+            # It can be anything besides a colon, comma, or whitespace.
+            [^:,\s]
+
+            # It can even be a comma that is NOT followed by whitespace.
+          | ,(?!\s)
+
+            # It can even be whitespace, but NOT surrounding a dash.
+          | \s(?![-\N{EN DASH}\N{EM DASH}]\s)
+        )
+    )*
+    """,
+    flags=(re.VERBOSE | re.UNICODE),
 )
 """Regex for the "name" part of "name: summary" or several similar forms."""
 
