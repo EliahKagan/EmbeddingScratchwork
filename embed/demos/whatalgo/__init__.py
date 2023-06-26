@@ -7,11 +7,13 @@ __all__ = [
     'define_names',
     'get_code_text',
     'compute_similarities',
+    'show_top',
 ]
 
 import inspect
 import logging
 from pathlib import Path
+import pprint
 import re
 
 import attrs
@@ -186,3 +188,19 @@ def compute_similarities(*, name_describer, implementations, data_dir=None):
 
     # Return a matrxix of all (description, code) similarities.
     return code_embeddings @ description_embeddings.transpose()
+
+
+def show_top(*, labels, similarities, count=5, data_dir=None):
+    """Display the top ``count`` results from ``compute_similarities``."""
+    if len(labels) != len(similarities):
+        raise ValueError(f'number of labels ({len(labels)}) unequal to '
+                         f'number of similarities ({len(similarities)})')
+
+    names = get_known_names(data_dir=data_dir)
+
+    for label, row in zip(labels, similarities):
+        print(f'\n{label} example:\n')
+        sorted_row = row.argsort(kind='stable')
+        end_slice = slice(None, -(count + 1), -1)
+        top_picks = [names[index] for index in sorted_row[end_slice]]
+        pprint.pp(top_picks)
