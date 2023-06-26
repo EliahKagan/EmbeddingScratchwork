@@ -3,6 +3,8 @@
 __all__ = [
     'examples',
     'get_known_names',
+    'same_names',
+    'define_names',
     'get_code_text',
     'compute_similarities',
 ]
@@ -108,6 +110,28 @@ def get_known_names(data_dir=None):
     return names
 
 
+def same_names(names):
+    """
+    Identity function. Returns the names passed in, unchanged.
+
+    Use this to make ``compute_similarities`` compare code to names.
+    """
+    return names
+
+
+def define_names(names):
+    """
+    Retrieve output from a completion model prompted to define each name.
+
+    Use this to make ``compute_similarities`` compare code to definitions. Note
+    that the definitions may not always be correct or otherwise informative.
+    The search task (see ``compute_similarities``) may tolerate some
+    inaccuracies. We have not tested this combination of prompt, model, and
+    inference parameters for the distinct task of generating edifying text.
+    """
+    raise NotImplementedError  # FIXME: Implement this.
+
+
 def get_code_text(implementation):
     """
     Get the source code text of an implementation.
@@ -137,16 +161,26 @@ def get_code_text(implementation):
     return implementation
 
 
-# TODO: Make descriptions optional, once a good choice for them is known.
-def compute_similarities(*, descriptions, implementations, data_dir=None):
+# TODO: Make name_describer optional, once a good choice for it is known.
+def compute_similarities(*, name_describer, implementations, data_dir=None):
     """
     Compute similarities between pieces of source code and descriptions.
 
-    Returns a matrix with a row for each implementation. Each row's elements
-    are semantic similarities of that implementation to each description.
+    Names of known algorithms and data structures are obtained by calling
+    ``get_known_names``. The ``name_describer`` argument is expected to be a
+    function that, when called with these names, returns suitable descriptions
+    associated with them. (See ``same_names`` and ``define_names``.)
+
+    A matrix with a row for each implementation is returned. Each row's
+    elements are similarities of that implementation to each description.
     """
+    # Get the descriptions to search in, and the code to search with.
+    descriptions = name_describer(get_known_names(data_dir=data_dir))
     codes = [get_code_text(impl) for impl in implementations]
 
+    # Compute embeddings for all the descriptions and all the code.
     description_embeddings = cached.embed_many(descriptions, data_dir=data_dir)
     code_embeddings = cached.embed_many(codes, data_dir=data_dir)
+
+    # Return a matrxix of all (description, code) similarities.
     return code_embeddings @ description_embeddings.transpose()
