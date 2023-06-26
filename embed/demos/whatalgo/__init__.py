@@ -79,13 +79,6 @@ _ORJSON_SAVE_OPTIONS = orjson.OPT_APPEND_NEWLINE | orjson.OPT_INDENT_2
 _COMPLETION_REQUESTS_TIMEOUT = datetime.timedelta(seconds=60)
 """Connection timeout for completion-model requests."""
 
-_COMPLETION_RETRY_ERRORS = (
-    openai.error.RateLimitError,
-    openai.error.ServiceUnavailableError,
-    openai.error.Timeout,
-)
-"""Exception types to retry completion-model requests on, via ``backoff``."""
-
 
 def _parse_section(section):
     """Parse the HTML of a Wikipedia article section with Beautiful Soup."""
@@ -135,7 +128,20 @@ def same_names(names, *, data_dir=None):
     return names
 
 
-@backoff.on_exception(backoff.expo, _COMPLETION_RETRY_ERRORS)
+@backoff.on_exception(
+    backoff.expo,
+    openai.error.ServiceUnavailableError,
+    max_tries=6,  # Compare to embeddings_utils, where ALL exceptions retry 6x.
+)
+@backoff.on_exception(
+    backoff.expo,
+    openai.error.Timeout,
+    max_tries=10,  # Eventually fail, in case the timeout is due to outage.
+)
+@backoff.on_exception(
+    backoff.expo,
+    openai.error.RateLimitError,
+)
 def generate_definition(name):
     """
     Request a completion from ``gpt-3.5-turbo-0613`` to attempt a definition.
