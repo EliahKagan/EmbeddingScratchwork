@@ -137,17 +137,14 @@ def get_code_text(implementation):
     return implementation
 
 
-# TODO: Expand the docstring further, with details and/or usage guidance.
-def compute_similarities(*, descriptions=None, implementations, data_dir=None):
+# TODO: Make descriptions optional, once a good choice for them is known.
+def compute_similarities(*, descriptions, implementations, data_dir=None):
     """
     Compute similarities between pieces of source code and descriptions.
 
     Returns a matrix with a row for each implementation. Each row's elements
     are semantic similarities of that implementation to each description.
     """
-    if descriptions is None:
-        descriptions = get_known_names(data_dir=data_dir)
-
     codes = [get_code_text(impl) for impl in implementations]
 
     description_embeddings = cached.embed_many(descriptions, data_dir=data_dir)
