@@ -100,8 +100,10 @@ def get_known_names(data_dir=None):
     except FileNotFoundError:
         names = _fetch_known_names()
         path.write_bytes(orjson.dumps(names, option=_ORJSON_SAVE_OPTIONS))
+        _logger.info('%s: saved: %s', get_known_names.__name__, path)
     else:
         names = orjson.loads(json_bytes)
+        _logger.info('%s: loaded: %s', get_known_names.__name__, path)
 
     return names
 
