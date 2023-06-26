@@ -11,6 +11,7 @@ __all__ = [
     'show_top',
 ]
 
+import datetime
 import inspect
 import logging
 from pathlib import Path
@@ -75,12 +76,15 @@ _NAME_PATTERN = re.compile(
 _ORJSON_SAVE_OPTIONS = orjson.OPT_APPEND_NEWLINE | orjson.OPT_INDENT_2
 """Options for ``orjson.dumps`` when it is called to save algorithm names."""
 
-_RETRY_ERRORS = (
+_COMPLETION_REQUESTS_TIMEOUT = datetime.timedelta(seconds=60)
+"""Connection timeout for completion-model requests."""
+
+_COMPLETION_RETRY_ERRORS = (
     openai.error.RateLimitError,
     openai.error.ServiceUnavailableError,
     openai.error.Timeout,
 )
-"""Exception types to retry completion requests on, via ``backoff``."""
+"""Exception types to retry completion-model requests on, via ``backoff``."""
 
 
 def _parse_section(section):
@@ -131,7 +135,7 @@ def same_names(names, *, data_dir=None):
     return names
 
 
-@backoff.on_exception(backoff.expo, _RETRY_ERRORS)
+@backoff.on_exception(backoff.expo, _COMPLETION_RETRY_ERRORS)
 def generate_definition(name):
     """
     Request a completion from ``gpt-3.5-turbo-0613`` to attempt a definition.
@@ -154,8 +158,11 @@ def generate_definition(name):
         ],
         temperature=0,
         max_tokens=650,
+        request_timeout=_COMPLETION_REQUESTS_TIMEOUT.total_seconds(),
     )
-    return openai_response.choices[0].message.content
+    content = openai_response.choices[0].message.content
+    _logger.info('%s: received: %r', generate_definition.__name__, name)
+    return content
 
 
 def _load_definitions(path):
@@ -202,8 +209,6 @@ def define_names(names, *, data_dir=None):
             definition = old_definitions[name]
         except KeyError:
             definition = new_definitions[name] = generate_definition(name)
-            _logger.info('%s: generated definition: %r',
-                         define_names.__name__, name)
         else:
             _logger.debug('%s: using loaded definition: %r',
                           define_names.__name__, name)
