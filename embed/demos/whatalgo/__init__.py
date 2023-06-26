@@ -171,6 +171,8 @@ def compute_similarities(*, name_describer, implementations, data_dir=None):
     function that, when called with these names, returns suitable descriptions
     associated with them. (See ``same_names`` and ``define_names``.)
 
+    Implementations may be provided in any way supported by ``get_code_text``.
+
     A matrix with a row for each implementation is returned. Each row's
     elements are similarities of that implementation to each description.
     """
