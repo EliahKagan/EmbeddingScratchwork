@@ -81,7 +81,7 @@ _ORJSON_SAVE_OPTIONS = orjson.OPT_APPEND_NEWLINE | orjson.OPT_INDENT_2
 _COMPLETION_REQUESTS_TIMEOUT = datetime.timedelta(seconds=60)
 """Connection timeout for completion-model requests."""
 
-_COMPLETION_JOBS = 10
+_COMPLETION_JOBS = 15
 """The maximum number of completion requests in progress at any one time."""
 
 
@@ -151,7 +151,7 @@ def generate_definition(name):
     """
     Request a completion from ``gpt-3.5-turbo-0613`` to attempt a definition.
 
-    This is public beceause it makes sense to call it to check that the output
+    This is public because it makes sense to call it to check that the output
     appears suitable. But it serves chiefly as a helper for ``define_names``.
     See the ``define_names`` docstring for an important note on accuracy.
     """
