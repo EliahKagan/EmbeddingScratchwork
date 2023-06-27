@@ -81,7 +81,7 @@ _ORJSON_SAVE_OPTIONS = orjson.OPT_APPEND_NEWLINE | orjson.OPT_INDENT_2
 _COMPLETION_REQUESTS_TIMEOUT = datetime.timedelta(seconds=60)
 """Connection timeout for completion-model requests."""
 
-_COMPLETION_JOBS = 15
+_COMPLETION_JOBS = 20
 """The maximum number of completion requests in progress at any one time."""
 
 
