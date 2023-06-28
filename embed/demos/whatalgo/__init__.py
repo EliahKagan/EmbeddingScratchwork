@@ -160,11 +160,11 @@ def generate_definition(name):
         messages=[
             {
                 'role': 'system',
-                'content': 'Define the algorithm or data structure.',
+                'content': 'Define the algorithm or data structure, but write every sentence in the style of a 1920s socialite.',
             },
             {
                 'role': 'user',
-                'content': name,
+                'content': 'Algorithm or data structure to define: ' + name,
             },
         ],
         temperature=0,
