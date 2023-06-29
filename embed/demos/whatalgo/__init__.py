@@ -147,7 +147,7 @@ def same_names(names, *, data_dir=None):
     backoff.expo,
     openai.error.RateLimitError,
 )
-def generate_definition(name):
+def generate_definition(name):  # FIXME: Definition? Or pseudocode?
     """
     Request a completion from ``gpt-3.5-turbo-0613`` to attempt a definition.
 
@@ -160,11 +160,11 @@ def generate_definition(name):
         messages=[
             {
                 'role': 'system',
-                'content': 'Define the algorithm or data structure, but write every sentence in the style of a 1920s socialite.',
+                'content': 'The user gives the name of an algorithm or data structure. You reply in pseudocode. Reply ONLY with pseudocode. You are absolutely prohibited from writing any comments.',
             },
             {
                 'role': 'user',
-                'content': 'Algorithm or data structure to define: ' + name,
+                'content': name,
             },
         ],
         temperature=0,
