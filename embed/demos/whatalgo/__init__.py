@@ -135,13 +135,8 @@ def same_names(names, *, data_dir=None):
 
 @backoff.on_exception(
     backoff.expo,
-    openai.error.ServiceUnavailableError,
+    (openai.error.ServiceUnavailableError, openai.error.Timeout),
     max_tries=6,  # Compare to embeddings_utils, where ALL exceptions retry 6x.
-)
-@backoff.on_exception(
-    backoff.expo,
-    openai.error.Timeout,
-    max_tries=10,  # Eventually fail, in case the timeout is due to outage.
 )
 @backoff.on_exception(
     backoff.expo,
