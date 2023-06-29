@@ -160,7 +160,7 @@ def generate_definition(name):  # FIXME: Definition? Or pseudocode?
         messages=[
             {
                 'role': 'system',
-                'content': 'The user gives the name of an algorithm or data structure. You reply in pseudocode. Reply ONLY with pseudocode. You are absolutely prohibited from writing any comments.',
+                'content': 'The user gives the name of an algorithm or data structure. You reply in adiabatic pseudocode. Reply ONLY with pseudocode. You are absolutely prohibited from writing any comments.',
             },
             {
                 'role': 'user',
